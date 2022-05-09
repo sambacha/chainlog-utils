@@ -1,4 +1,4 @@
-import { DeployConfig } from '../src/deploy-config'
+import { DeployConfig } from '../src/deploy-config';
 
 const config: DeployConfig = {
   numDeployConfirmations: 4,
@@ -17,6 +17,6 @@ const config: DeployConfig = {
   ovmAddressManagerOwner: '0x9BA6e03D8B90dE867373Db8cF1A58d2F7F006b3A',
   ovmGasPriceOracleOwner: '0x7107142636C85c549690b1Aca12Bdb8052d26Ae6',
   ovmWhitelistOwner: '0x648E3e8101BFaB7bf5997Bd007Fb473786019159',
-}
+};
 
-export default config
+export default config;

@@ -20,4 +20,4 @@ export const names = {
     ChugSplashDictator: 'ChugSplashDictator',
     Lib_AddressManager: 'Lib_AddressManager',
   },
-}
+};

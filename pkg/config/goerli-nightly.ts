@@ -1,4 +1,4 @@
-import { DeployConfig } from '../src/deploy-config'
+import { DeployConfig } from '../src/deploy-config';
 
 const config: DeployConfig = {
   l1BlockTimeSeconds: 15,
@@ -14,6 +14,6 @@ const config: DeployConfig = {
   ovmFeeWalletAddress: '0xba517B809d22D5e27F607c03dEBDe09d5Ad27049',
   ovmAddressManagerOwner: '0x4F3F400c20448D33ECc12E7d289F49dA7fC51736',
   ovmGasPriceOracleOwner: '0xc8910a1957d276cE5634B978d908B5ef9fB0e05B',
-}
+};
 
-export default config
+export default config;

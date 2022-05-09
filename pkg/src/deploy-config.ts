@@ -1,4 +1,4 @@
-import { ethers } from 'ethers'
+import { ethers } from 'ethers';
 
 /**
  * Defines the configuration for a deployment.
@@ -7,117 +7,117 @@ export interface DeployConfig {
   /**
    * Whether or not this network is a forked network.
    */
-  isForkedNetwork?: boolean
+  isForkedNetwork?: boolean;
 
   /**
    * Optional number of confs to wait during deployment.
    */
-  numDeployConfirmations?: number
+  numDeployConfirmations?: number;
 
   /**
    * Optional gas price to use for deployment transactions.
    */
-  gasPrice?: number
+  gasPrice?: number;
 
   /**
    * Estimated average L1 block time in seconds.
    */
-  l1BlockTimeSeconds: number
+  l1BlockTimeSeconds: number;
 
   /**
    * Gas limit for blocks on L2.
    */
-  l2BlockGasLimit: number
+  l2BlockGasLimit: number;
 
   /**
    * Chain ID for the L2 network.
    */
-  l2ChainId: number
+  l2ChainId: number;
 
   /**
    * Discount divisor used to calculate gas burn for L1 to L2 transactions.
    */
-  ctcL2GasDiscountDivisor: number
+  ctcL2GasDiscountDivisor: number;
 
   /**
    * Cost of the "enqueue" function in the CTC.
    */
-  ctcEnqueueGasCost: number
+  ctcEnqueueGasCost: number;
 
   /**
    * Fault proof window in seconds.
    */
-  sccFaultProofWindowSeconds: number
+  sccFaultProofWindowSeconds: number;
 
   /**
    * Sequencer publish window in seconds.
    */
-  sccSequencerPublishWindowSeconds: number
+  sccSequencerPublishWindowSeconds: number;
 
   /**
    * Address of the Sequencer (publishes to CTC).
    */
-  ovmSequencerAddress: string
+  ovmSequencerAddress: string;
 
   /**
    * Address of the Proposer (publishes to SCC).
    */
-  ovmProposerAddress: string
+  ovmProposerAddress: string;
 
   /**
    * Address of the account that will sign blocks.
    */
-  ovmBlockSignerAddress: string
+  ovmBlockSignerAddress: string;
 
   /**
    * Address that will receive fees on L1.
    */
-  ovmFeeWalletAddress: string
+  ovmFeeWalletAddress: string;
 
   /**
    * Address of the owner of the AddressManager contract on L1.
    */
-  ovmAddressManagerOwner: string
+  ovmAddressManagerOwner: string;
 
   /**
    * Address of the owner of the GasPriceOracle contract on L2.
    */
-  ovmGasPriceOracleOwner: string
+  ovmGasPriceOracleOwner: string;
 
   /**
    * Optional whitelist owner address.
    */
-  ovmWhitelistOwner?: string
+  ovmWhitelistOwner?: string;
 
   /**
    * Optional initial overhead value for GPO (default: 2750).
    */
-  gasPriceOracleOverhead?: number
+  gasPriceOracleOverhead?: number;
 
   /**
    * Optional initial scalar value for GPO (default: 1500000).
    */
-  gasPriceOracleScalar?: number
+  gasPriceOracleScalar?: number;
 
   /**
    * Optional initial decimals for GPO (default: 6).
    */
-  gasPriceOracleDecimals?: number
+  gasPriceOracleDecimals?: number;
 
   /**
    * Optional initial L1 base fee for GPO (default: 1).
    */
-  gasPriceOracleL1BaseFee?: number
+  gasPriceOracleL1BaseFee?: number;
 
   /**
    * Optional initial L2 gas price for GPO (default: 1).
    */
-  gasPriceOracleL2GasPrice?: number
+  gasPriceOracleL2GasPrice?: number;
 
   /**
    * Optional block number to enable the Berlin hardfork (default: 0).
    */
-  hfBerlinBlock?: number
+  hfBerlinBlock?: number;
 }
 
 /**
@@ -125,9 +125,9 @@ export interface DeployConfig {
  */
 const configSpec: {
   [K in keyof DeployConfig]: {
-    type: string
-    default?: any
-  }
+    type: string;
+    default?: any;
+  };
 } = {
   isForkedNetwork: {
     type: 'boolean',
@@ -208,7 +208,7 @@ const configSpec: {
     type: 'number',
     default: 0,
   },
-}
+};
 
 /**
  * Gets the deploy config for the given network.
@@ -217,18 +217,16 @@ const configSpec: {
  * @returns Deploy config for the given network.
  */
 export const getDeployConfig = (network: string): Required<DeployConfig> => {
-  let config: DeployConfig
+  let config: DeployConfig;
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    config = require(`../deploy-config/${network}.ts`).default
+    config = require(`../deploy-config/${network}.ts`).default;
   } catch (err) {
-    throw new Error(
-      `error while loading deploy config for network: ${network}, ${err}`
-    )
+    throw new Error(`error while loading deploy config for network: ${network}, ${err}`);
   }
 
-  return parseDeployConfig(config)
-}
+  return parseDeployConfig(config);
+};
 
 /**
  * Parses and validates the given deploy config, replacing any missing values with defaults.
@@ -236,38 +234,32 @@ export const getDeployConfig = (network: string): Required<DeployConfig> => {
  * @param config Deploy config to parse.
  * @returns Parsed deploy config.
  */
-export const parseDeployConfig = (
-  config: DeployConfig
-): Required<DeployConfig> => {
+export const parseDeployConfig = (config: DeployConfig): Required<DeployConfig> => {
   // Create a clone of the config object. Shallow clone is fine because none of the input options
   // are expected to be objects or functions etc.
-  const parsed = { ...config }
+  const parsed = { ...config };
 
   for (const [key, spec] of Object.entries(configSpec)) {
     // Make sure the value is defined, or use a default.
     if (parsed[key] === undefined) {
       if ('default' in spec) {
-        parsed[key] = spec.default
+        parsed[key] = spec.default;
       } else {
-        throw new Error(
-          `deploy config is missing required field: ${key} (${spec.type})`
-        )
+        throw new Error(`deploy config is missing required field: ${key} (${spec.type})`);
       }
     } else {
       // Make sure the default has the correct type.
       if (spec.type === 'address') {
         if (!ethers.utils.isAddress(parsed[key])) {
           throw new Error(
-            `deploy config field: ${key} is not of type ${spec.type}: ${parsed[key]}`
-          )
+            `deploy config field: ${key} is not of type ${spec.type}: ${parsed[key]}`,
+          );
         }
       } else if (typeof parsed[key] !== spec.type) {
-        throw new Error(
-          `deploy config field: ${key} is not of type ${spec.type}: ${parsed[key]}`
-        )
+        throw new Error(`deploy config field: ${key} is not of type ${spec.type}: ${parsed[key]}`);
       }
     }
   }
 
-  return parsed as Required<DeployConfig>
-}
+  return parsed as Required<DeployConfig>;
+};

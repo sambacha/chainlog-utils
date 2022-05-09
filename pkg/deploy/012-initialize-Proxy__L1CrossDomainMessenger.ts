@@ -1,15 +1,15 @@
 /* Imports: External */
-import { DeployFunction } from 'hardhat-deploy/dist/types'
-import { hexStringEquals, awaitCondition } from '@eth-optimism/core-utils'
+import { DeployFunction } from 'hardhat-deploy/dist/types';
+import { hexStringEquals, awaitCondition } from '@eth-optimism/core-utils';
 
 /* Imports: Internal */
-import { getContractFromArtifact } from '../src/deploy-utils'
-import { getDeployConfig } from '../src/deploy-config'
-import { names } from '../src/address-names'
+import { getContractFromArtifact } from '../src/deploy-utils';
+import { getDeployConfig } from '../src/deploy-config';
+import { names } from '../src/address-names';
 
 const deployFn: DeployFunction = async (hre) => {
-  const deployConfig = getDeployConfig(hre.network.name)
-  const { deployer } = await hre.getNamedAccounts()
+  const deployConfig = getDeployConfig(hre.network.name);
+  const { deployer } = await hre.getNamedAccounts();
 
   // There's a risk that we could get front-run during a fresh deployment, which would brick this
   // contract and require that the proxy be re-deployed. We will not have this risk once we move
@@ -21,46 +21,40 @@ const deployFn: DeployFunction = async (hre) => {
     {
       iface: 'L1CrossDomainMessenger',
       signerOrProvider: deployer,
-    }
-  )
+    },
+  );
 
-  const Lib_AddressManager = await getContractFromArtifact(
-    hre,
-    names.unmanaged.Lib_AddressManager
-  )
+  const Lib_AddressManager = await getContractFromArtifact(hre, names.unmanaged.Lib_AddressManager);
 
-  console.log(`Initializing Proxy__OVM_L1CrossDomainMessenger...`)
-  await Proxy__OVM_L1CrossDomainMessenger.initialize(Lib_AddressManager.address)
+  console.log(`Initializing Proxy__OVM_L1CrossDomainMessenger...`);
+  await Proxy__OVM_L1CrossDomainMessenger.initialize(Lib_AddressManager.address);
 
-  console.log(`Checking that contract was correctly initialized...`)
+  console.log(`Checking that contract was correctly initialized...`);
   await awaitCondition(
     async () => {
       return hexStringEquals(
         await Proxy__OVM_L1CrossDomainMessenger.libAddressManager(),
-        Lib_AddressManager.address
-      )
+        Lib_AddressManager.address,
+      );
     },
     5000,
-    100
-  )
+    100,
+  );
 
-  console.log(`Setting Proxy__OVM_L1CrossDomainMessenger owner...`)
-  const owner = deployConfig.ovmAddressManagerOwner
-  await Proxy__OVM_L1CrossDomainMessenger.transferOwnership(owner)
+  console.log(`Setting Proxy__OVM_L1CrossDomainMessenger owner...`);
+  const owner = deployConfig.ovmAddressManagerOwner;
+  await Proxy__OVM_L1CrossDomainMessenger.transferOwnership(owner);
 
-  console.log(`Checking that the contract owner was correctly set...`)
+  console.log(`Checking that the contract owner was correctly set...`);
   await awaitCondition(
     async () => {
-      return hexStringEquals(
-        await Proxy__OVM_L1CrossDomainMessenger.owner(),
-        owner
-      )
+      return hexStringEquals(await Proxy__OVM_L1CrossDomainMessenger.owner(), owner);
     },
     5000,
-    100
-  )
-}
+    100,
+  );
+};
 
-deployFn.tags = ['finalize']
+deployFn.tags = ['finalize'];
 
-export default deployFn
+export default deployFn;

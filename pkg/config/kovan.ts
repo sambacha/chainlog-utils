@@ -1,4 +1,4 @@
-import { DeployConfig } from '../src/deploy-config'
+import { DeployConfig } from '../src/deploy-config';
 
 const config: DeployConfig = {
   numDeployConfirmations: 1,
@@ -16,6 +16,6 @@ const config: DeployConfig = {
   ovmFeeWalletAddress: '0xB79f76EF2c5F0286176833E7B2eEe103b1CC3244',
   ovmAddressManagerOwner: '0x18394B52d3Cb931dfA76F63251919D051953413d',
   ovmGasPriceOracleOwner: '0x84f70449f90300997840eCb0918873745Ede7aE6',
-}
+};
 
-export default config
+export default config;

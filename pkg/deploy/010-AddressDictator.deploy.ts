@@ -1,35 +1,29 @@
 /* Imports: External */
-import { DeployFunction } from 'hardhat-deploy/dist/types'
-import { hexStringEquals } from '@eth-optimism/core-utils'
+import { DeployFunction } from 'hardhat-deploy/dist/types';
+import { hexStringEquals } from '@eth-optimism/core-utils';
 
 /* Imports: Internal */
-import {
-  deployAndVerifyAndThen,
-  getContractFromArtifact,
-} from '../src/deploy-utils'
-import { getDeployConfig } from '../src/deploy-config'
-import { names } from '../src/address-names'
-import { predeploys } from '../src/predeploys'
+import { deployAndVerifyAndThen, getContractFromArtifact } from '../src/deploy-utils';
+import { getDeployConfig } from '../src/deploy-config';
+import { names } from '../src/address-names';
+import { predeploys } from '../src/predeploys';
 
 const deployFn: DeployFunction = async (hre) => {
-  const deployConfig = getDeployConfig(hre.network.name)
+  const deployConfig = getDeployConfig(hre.network.name);
 
-  const Lib_AddressManager = await getContractFromArtifact(
-    hre,
-    names.unmanaged.Lib_AddressManager
-  )
+  const Lib_AddressManager = await getContractFromArtifact(hre, names.unmanaged.Lib_AddressManager);
 
   let namesAndAddresses: {
-    name: string
-    address: string
+    name: string;
+    address: string;
   }[] = await Promise.all(
     Object.values(names.managed.contracts).map(async (name) => {
       return {
         name,
         address: (await getContractFromArtifact(hre, name)).address,
-      }
-    })
-  )
+      };
+    }),
+  );
 
   // Add non-deployed addresses to the Address Dictator arguments.
   namesAndAddresses = [
@@ -53,19 +47,17 @@ const deployFn: DeployFunction = async (hre) => {
       name: names.managed.accounts.OVM_Proposer,
       address: deployConfig.ovmProposerAddress,
     },
-  ]
+  ];
 
   // Filter out all addresses that will not change, so that the log statement is maximally
   // verifiable and readable.
-  const existingAddresses = {}
+  const existingAddresses = {};
   for (const pair of namesAndAddresses) {
-    existingAddresses[pair.name] = await Lib_AddressManager.getAddress(
-      pair.name
-    )
+    existingAddresses[pair.name] = await Lib_AddressManager.getAddress(pair.name);
   }
   namesAndAddresses = namesAndAddresses.filter(({ name, address }) => {
-    return !hexStringEquals(existingAddresses[name], address)
-  })
+    return !hexStringEquals(existingAddresses[name], address);
+  });
 
   await deployAndVerifyAndThen({
     hre,
@@ -74,15 +66,15 @@ const deployFn: DeployFunction = async (hre) => {
       Lib_AddressManager.address,
       deployConfig.ovmAddressManagerOwner,
       namesAndAddresses.map((pair) => {
-        return pair.name
+        return pair.name;
       }),
       namesAndAddresses.map((pair) => {
-        return pair.address
+        return pair.address;
       }),
     ],
-  })
-}
+  });
+};
 
-deployFn.tags = ['upgrade', 'AddressDictator']
+deployFn.tags = ['upgrade', 'AddressDictator'];
 
-export default deployFn
+export default deployFn;
