@@ -197,7 +197,7 @@ const main = async () => {
   }
 
   let primary = ``;
-  primary = addline(primary, `# Optimism Deployments`);
+  primary = addline(primary, `# Manifold Deployments`);
   for (const deployment of PUBLIC_DEPLOYMENTS) {
     primary = addline(primary, `- [${deployment.name}](./${deployment.folder}#readme)`);
   }
