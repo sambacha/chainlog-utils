@@ -11,33 +11,31 @@ interface DeploymentInfo {
   chainid: number;
   rpc?: string;
   l1Explorer?: string;
-  l2Explorer?: string;
+//  l2Explorer?: string;
   notice?: string;
 }
 
 const PUBLIC_DEPLOYMENTS: DeploymentInfo[] = [
   {
     folder: 'mainnet',
-    name: 'Optimism (mainnet)',
-    chainid: 10,
-    rpc: 'https://mainnet.optimism.io',
-    l1Explorer: 'https://etherscan.io',
-    l2Explorer: 'https://optimistic.etherscan.io',
-  },
-  {
-    folder: 'kovan',
-    name: 'Optimism Kovan (public testnet)',
-    chainid: 69,
-    rpc: 'https://kovan.optimism.io',
-    l1Explorer: 'https://kovan.etherscan.io',
-    l2Explorer: 'https://kovan-optimistic.etherscan.io',
+    name: 'Homestead (Ethereum Mainnet)',
+    chainid: 1,
+    rpc: 'https://goerli.infura.io/v3/11a98d57302b4d569a52a42b40220a00',
+    l1Explorer: 'https://goerli.etherscan.io',
   },
   {
     folder: 'goerli',
-    name: 'Optimism Goerli (internal devnet)',
-    chainid: 420,
-    notice: `Optimism Goerli is an internal Optimism development network. You're probably looking for [Optimism Kovan](../kovan#readme), the public Optimism testnet.`,
+    name: 'Goerli (public testnet)',
+    chainid: 5,
+    rpc: 'https://goerli.infura.io/v3/11a98d57302b4d569a52a42b40220a00',
     l1Explorer: 'https://goerli.etherscan.io',
+  },
+  {
+    folder: 'magi',
+    name: 'Magi (internal devnet)',
+    chainid: 420,
+    notice: `internal usage only`,
+    l1Explorer: 'https://testnet.manifoldx.com',
   },
 ];
 
@@ -46,14 +44,10 @@ const PUBLIC_DEPLOYMENTS: DeploymentInfo[] = [
 // deployment process. Although these addresses are public and users can technically try to use
 // them, there's no point in doing so. As a result, we hide these addresses to avoid confusion.
 const HIDDEN_CONTRACTS = [
-  // Used for being able to verify the ChugSplashProxy contract.
-  'L1StandardBridge_for_verification_only',
-  // Implementation address for the Proxy__OVM_L1CrossDomainMessenger.
-  'OVM_L1CrossDomainMessenger',
-  // Utility for modifying many records in the AddressManager at the same time.
-  'AddressDictator',
-  // Utility for modifying a ChugSplashProxy during an upgrade.
-  'ChugSplashDictator',
+  // Migrations
+  'Migrations',
+  // Create2
+  'ImmutableCreate2',
 ];
 
 interface ContractInfo {
@@ -161,7 +155,7 @@ const getL1Contracts = (deployment: string): ContractInfo[] => {
  *
  * @param deployment Folder where the deployment is located.
  * @returns List of L2 system contracts for the given deployment.
- */
+
 const getL2Contracts = (deployment: string): ContractInfo[] => {
   // Deployment parameter is currently unused because all networks have the same predeploy
   // addresses. However, we've had situations in the past where we've had to deploy one-off
@@ -174,6 +168,7 @@ const getL2Contracts = (deployment: string): ContractInfo[] => {
     };
   });
 };
+ */
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 const main = async () => {
@@ -194,8 +189,8 @@ const main = async () => {
     }
     md = addline(md, `## Layer 1 Contracts`);
     md = addline(md, buildContractsTable(getL1Contracts(deployment.folder), deployment.l1Explorer));
-    md = addline(md, `## Layer 2 Contracts`);
-    md = addline(md, buildContractsTable(getL2Contracts(deployment.folder), deployment.l2Explorer));
+ //   md = addline(md, `## Layer 2 Contracts`);
+ //   md = addline(md, buildContractsTable(getL2Contracts(deployment.folder), deployment.l2Explorer));
 
     // Write the README file for the deployment
     fs.writeFileSync(path.join(getDeploymentFolderPath(deployment.folder), 'README.md'), md);
@@ -212,3 +207,4 @@ const main = async () => {
 };
 
 main();
+/** @generate-markdown */
